@@ -47,11 +47,11 @@
 	return target_atom.loc != owner.loc
 
 /// This is a non-async proc to make sure the power is "locked" until this finishes.
-/datum/action/cooldown/bloodsucker/targeted/haste/FireTargetedPower(atom/target_atom)
+/datum/action/cooldown/bloodsucker/targeted/haste/FireTargetedPower(atom/target, params)
 	. = ..()
 	RegisterSignal(owner, COMSIG_MOVABLE_MOVED, PROC_REF(on_move))
 	var/mob/living/user = owner
-	var/turf/targeted_turf = isturf(target_atom) ? target_atom : get_turf(target_atom)
+	var/turf/targeted_turf = isturf(target) ? target : get_turf(target)
 	// Pulled? Not anymore.
 	user.pulledby?.stop_pulling()
 	// Go to target turf
@@ -76,7 +76,7 @@
 			sleep(world.tick_lag)
 	user.adjustStaminaLoss(-user.staminaloss)
 
-/datum/action/cooldown/bloodsucker/targeted/haste/power_activated_sucessfully()
+/datum/action/cooldown/bloodsucker/targeted/haste/PowerActivatedSuccesfully()
 	. = ..()
 	UnregisterSignal(owner, COMSIG_MOVABLE_MOVED)
 	hit.Cut()
