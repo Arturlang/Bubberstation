@@ -21,6 +21,10 @@
 	/// Traits the ability gives to the victim when they are being drunk from
 	var/list/victim_traits = list()
 
+/datum/action/cooldown/bloodsucker/feed/gorge/proc/start_feed(mob/living/feed_target)
+	. = ..()
+	feed_target.add_traits(victim_traits)
+
 // /datum/action/cooldown/bloodsucker/feed/gorge/can_use(mob/living/carbon/user, trigger_flags)
 // 	. = ..()
 // 	if(!.)
