@@ -55,6 +55,79 @@ ADMIN_VERB(simulate_maintenance_loot, R_DEBUG, "Simulate Maintenance Loot", "Sim
 
 	user << browse(returning_data, "window=maintenace_report")
 
+ADMIN_VERB(find_all_lists, R_DEBUG, "Find All Lists", "Popup a list of all lists", ADMIN_CATEGORY_DEBUG)
+	var/list/nullspaced_objects = list()
+	for(var/list/object)
+		if(!istype(object))
+			continue
+		nullspaced_objects += object
+		CHECK_TICK
+
+	var/no_duplicates = list()
+	for(var/list/object as anything in nullspaced_objects)
+		var/refcount = refcount(object)
+		no_duplicates += list("priority" = length(object), "refcount" = refcount, "object" = object)
+		CHECK_TICK
+
+	// sortTim(no_duplicates, GLOBAL_PROC_REF(cmp_filter_data_priority), TRUE)
+
+	var/list/nullspace_tagged_objects = list()
+	var/list/strings = list()
+	for(var/object_type as anything in no_duplicates)
+		var/list/sub_list = no_duplicates[object_type]
+		var/atom/object = sub_list["object"]
+		var/refcount = sub_list["refcount"]
+		var/count = sub_list["priority"]
+		if(isnull(object))
+			continue
+		if(!object.tag)
+			nullspace_tagged_objects += object
+		strings += "\
+			refs: [refcount], \
+			instances: [count], \
+			length: [length(object)], \
+			[ADMIN_VV(object)]"
+		CHECK_TICK
+
+	var/title = "List of all datums"
+	user << browse(HTML_SKELETON_TITLE(title, "[jointext(strings, "<br>")]"), "window=maintenace_report")
+
+ADMIN_VERB(find_all_datums, R_DEBUG, "Find All Datums", "Popup a list of all datums", ADMIN_CATEGORY_DEBUG)
+	var/list/nullspaced_objects = list()
+	for(var/datum/object)
+		nullspaced_objects += object
+		CHECK_TICK
+
+	var/no_duplicates = list()
+	for(var/datum/object as anything in nullspaced_objects)
+		var/refcount = refcount(object)
+		if(no_duplicates[object.type] && no_duplicates[object.type]["refcount"] == refcount)
+			no_duplicates[object.type]["priority"] += 1
+			continue
+		no_duplicates[object.type] = list("priority" = 1, "refcount" = refcount, "object" = object)
+		CHECK_TICK
+
+	sortTim(no_duplicates, GLOBAL_PROC_REF(cmp_filter_data_priority), TRUE)
+
+	var/list/strings = list()
+	for(var/object_type as anything in no_duplicates)
+		var/list/sub_list = no_duplicates[object_type]
+		var/atom/object = sub_list["object"]
+		var/refcount = sub_list["refcount"]
+		var/count = sub_list["priority"]
+		if(isnull(object))
+			continue
+		strings += "Name: [object], \
+			Type: [object_type], \
+			refs: [refcount], \
+			instances: [count], \
+			qdeleting: [QDELING(object) ? "yes" : "no"] \
+			[ADMIN_VV(object)]"
+		CHECK_TICK
+
+	var/title = "List of all objects with a loc of null"
+	user << browse(HTML_SKELETON_TITLE(title, "[jointext(strings, "<br>")]"), "window=maintenace_report")
+
 ADMIN_VERB(find_nullspaced_objects, R_DEBUG, "Find Nullspaced Objects", "Popup a list of all objects with a loc of null", ADMIN_CATEGORY_DEBUG)
 	var/list/nullspaced_objects = list()
 	for(var/atom/object as anything)
@@ -76,7 +149,6 @@ ADMIN_VERB(find_nullspaced_objects, R_DEBUG, "Find Nullspaced Objects", "Popup a
 
 	sortTim(no_duplicates, GLOBAL_PROC_REF(cmp_filter_data_priority), TRUE)
 
-	var/list/nullspace_tagged_objects = list()
 	var/list/strings = list()
 	for(var/object_type as anything in no_duplicates)
 		var/list/sub_list = no_duplicates[object_type]
@@ -85,8 +157,6 @@ ADMIN_VERB(find_nullspaced_objects, R_DEBUG, "Find Nullspaced Objects", "Popup a
 		var/count = sub_list["priority"]
 		if(isnull(object))
 			continue
-		if(!object.tag)
-			nullspace_tagged_objects += object
 		strings += "Name: [object], \
 			Type: [object_type], \
 			refs: [refcount], \
@@ -95,5 +165,5 @@ ADMIN_VERB(find_nullspaced_objects, R_DEBUG, "Find Nullspaced Objects", "Popup a
 			[ADMIN_VV(object)]"
 		CHECK_TICK
 
-	var/title = "<h1>List of all objects with a loc of null:</h1><br>"
+	var/title = "List of all objects with a loc of null"
 	user << browse(HTML_SKELETON_TITLE(title, "[jointext(strings, "<br>")]"), "window=maintenace_report")

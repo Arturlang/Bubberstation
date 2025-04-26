@@ -24,6 +24,9 @@
 	if(associated_program)
 		display_name = initial(associated_program.filedesc)
 		desc = initial(associated_program.extended_desc)
+		log_harddel("Circuit component [src] of [initial(associated_program)] was initialized with an associated program.")
+	else
+		log_harddel("Circuit component of [associated_program] was initialized without an associated program.")
 	return ..() // Set the name correctly
 
 /obj/item/circuit_component/mod_program/register_shell(atom/movable/shell)
@@ -43,6 +46,8 @@
 		computer.store_file(associated_program)
 	else
 		associated_program = found_program
+
+	log_harddel("Circuit component [src] of [associated_program] was registered with an associated program in [computer].")
 
 	RegisterSignal(associated_program, COMSIG_COMPUTER_PROGRAM_START, PROC_REF(on_start))
 	RegisterSignal(associated_program, COMSIG_COMPUTER_PROGRAM_KILL, PROC_REF(on_kill))

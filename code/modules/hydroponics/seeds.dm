@@ -69,6 +69,8 @@
 	. = ..()
 	if(parent_ref)
 		currently_in = parent_ref
+	if(isnull(loc))
+		stack_trace("Seed [name] initialized without a location.")
 	// log_harddel("Seed [name] initialized with [parent_ref ? "parent ref [parent_ref.resolve()]" : "no parent ref"]")
 	pixel_x = base_pixel_x + rand(-8, 8)
 	pixel_y = base_pixel_y + rand(-8, 8)
@@ -136,7 +138,7 @@
 
 /// Copy all the variables from one seed to a new instance of the same seed and return it.
 /obj/item/seeds/proc/Copy()
-	var/obj/item/seeds/copy_seed = new type(null, TRUE)
+	var/obj/item/seeds/copy_seed = new type(src, TRUE)
 	// Copy all the stats
 	copy_seed.lifespan = lifespan
 	copy_seed.endurance = endurance
