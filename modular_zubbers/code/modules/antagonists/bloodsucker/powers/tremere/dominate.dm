@@ -41,7 +41,7 @@
 	. = list()
 	. += "Click any person to, after [DisplayTimeText(mesmerize_delay)], stun them for [DisplayTimeText(get_power_time())]."
 	. += "Right clicking on your victim however will apply a knockdown will confuse and slow them down for [DisplayTimeText(get_power_time())]."
-	. += "Finishing casting [src] completely immobilize, and blind them for the next [DisplayTimeText(get_power_time())] seconds, and will also mute them for [DisplayTimeText(get_power_time())] seconds."
+	. += "Finishing casting [src] completely immobilize, and blind them for the next [DisplayTimeText(get_power_time())], and will also mute them for [DisplayTimeText(get_power_time())]."
 	. += "While this ability is active, you will be able to see additional information about everyone in the room."
 	. += "At level [DOMINATE_XRAY_LEVEL], you will gain X-Ray vision while this ability is active."
 	. += "At level [DOMINATE_GHOULIZE_LEVEL], while adjacent to the target, if your target is in critical condition or dead, they will instead be turned into a temporary Ghoul. This will cost [TEMP_GHOULIZE_COST] blood."
