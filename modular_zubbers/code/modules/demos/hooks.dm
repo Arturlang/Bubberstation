@@ -30,7 +30,7 @@
 	SSdemo.mark_dirty(src)
 
 /atom
-var/image/demo_last_appearance
+	var/image/demo_last_appearance
 
 /atom/New(loc, ...)
 	. = ..()
