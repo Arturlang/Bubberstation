@@ -112,12 +112,18 @@ SUBSYSTEM_DEF(atoms)
 		#ifdef TESTING
 		count = 0
 		#endif
-
+		#ifndef DISABLE_DEMOS
+		SSdemo.mark_multiple_new(atoms) // monkestation edit: replays
+		var/list/atoms_to_mark = list() // monkestation edit: replays
+		#endif
 		for(var/atom/A as anything in world)
 			if(!(A.flags_1 & INITIALIZED_1))
 				PROFILE_INIT_ATOM_BEGIN()
 				InitAtom(A, FALSE, mapload_arg)
 				PROFILE_INIT_ATOM_END(A)
+				#ifndef DISABLE_DEMOS
+				atoms_to_mark += A // monkestation edit: replays
+				#endif
 				#ifdef TESTING
 				++count
 				#endif
@@ -127,6 +133,9 @@ SUBSYSTEM_DEF(atoms)
 					if(mapload_source)
 						set_tracked_initalized(INITIALIZATION_INNEW_MAPLOAD, mapload_source)
 
+		#ifndef DISABLE_DEMOS
+		SSdemo.mark_multiple_new(atoms_to_mark) // monkestation edit: replays
+		#endif
 	testing("Initialized [count] atoms")
 
 /datum/controller/subsystem/atoms/proc/map_loader_begin(source)

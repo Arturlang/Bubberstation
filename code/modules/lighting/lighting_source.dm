@@ -334,9 +334,24 @@ GLOBAL_LIST_EMPTY(lighting_sheets)
 /datum/light_source/proc/remove_lum()
 	SETUP_CORNERS_REMOVAL_CACHE(src)
 	applied = FALSE
+	#ifndef DISABLE_DEMOS
+	var/list/turfs_to_mark = list()
+	#endif
 	for (var/datum/lighting_corner/corner as anything in effect_str)
 		REMOVE_CORNER(corner)
 		LAZYREMOVE(corner.affecting, src)
+
+		#ifndef DISABLE_DEMOS
+		turfs_to_mark += list(
+			corner.master_NE,
+			corner.master_SE,
+			corner.master_SW,
+			corner.master_NW
+		)
+		#endif
+	#ifndef DISABLE_DEMOS
+	SSdemo.mark_multiple_turfs(turfs_to_mark)
+	#endif
 
 	effect_str = null
 
@@ -464,6 +479,9 @@ GLOBAL_LIST_EMPTY(lighting_sheets)
 /// Returns a list of lighting corners this source impacts
 /datum/light_source/proc/impacted_corners()
 	var/list/datum/lighting_corner/corners = list()
+	#ifndef DISABLE_DEMOS
+	var/list/marked_turfs = list()
+	#endif
 	if (!source_turf)
 		return list()
 
@@ -479,12 +497,18 @@ GLOBAL_LIST_EMPTY(lighting_sheets)
 				continue
 			INSERT_CORNERS(corners, T)
 		source_turf.luminosity = oldlum
+		#ifndef DISABLE_DEMOS
+		marked_turfs += source_turf
+		#endif
 		return corners
 
 	for(var/turf/T in view(working_range, source_turf))
 		if(IS_OPAQUE_TURF(T))
 			continue
 		INSERT_CORNERS(corners, T)
+		#ifndef DISABLE_DEMOS
+		marked_turfs += source_turf
+		#endif
 
 		var/turf/below = GET_TURF_BELOW(T)
 		var/turf/previous = T
@@ -498,6 +522,9 @@ GLOBAL_LIST_EMPTY(lighting_sheets)
 				break
 			// Now we do lighting things to it
 			INSERT_CORNERS(corners, below)
+			#ifndef DISABLE_DEMOS
+			marked_turfs += source_turf
+			#endif
 			// ANNND then we add the one below it
 			previous = below
 			below = GET_TURF_BELOW(below)
@@ -508,8 +535,13 @@ GLOBAL_LIST_EMPTY(lighting_sheets)
 			if(!istransparentturf(above) || IS_OPAQUE_TURF(above))
 				break
 			INSERT_CORNERS(corners, above)
+			#ifndef DISABLE_DEMOS
+			marked_turfs += source_turf
+			#endif
 			above = GET_TURF_ABOVE(above)
-
+	#ifndef DISABLE_DEMOS
+	SSdemo.mark_multiple_turfs(marked_turfs)
+	#endif
 	source_turf.luminosity = oldlum
 	return corners
 

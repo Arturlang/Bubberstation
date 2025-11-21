@@ -22,4 +22,5 @@
 				AA.copy_overlays(changed_on, TRUE);\
 			}\
 		} \
-	}
+	} \
+	POST_OVERLAY_CHANGE_DEMOS(changed_on)

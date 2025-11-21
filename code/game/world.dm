@@ -217,6 +217,7 @@ GLOBAL_VAR(restart_counter)
 		GLOB.public_log_directory = "data/public/logs/[texttime]/round-" // BUBBER EDIT ADDITION
 		GLOB.picture_logging_prefix = "L_[time2text(realtime, "YYYYMMDD", TIMEZONE_UTC)]_"
 		GLOB.picture_log_directory = "data/picture_logs/[texttime]/round-"
+		GLOB.demo_directory = "data/replays"
 		if(GLOB.round_id)
 			GLOB.log_directory += "[GLOB.round_id]"
 			GLOB.public_log_directory += "[GLOB.round_id]" // BUBBER EDIT ADDITION
@@ -233,7 +234,9 @@ GLOBAL_VAR(restart_counter)
 		GLOB.public_log_directory = "data/logs/public/[override_dir]" // BUBBER EDIT ADDITION
 		GLOB.picture_logging_prefix = "O_[override_dir]_"
 		GLOB.picture_log_directory = "data/picture_logs/[override_dir]"
+		GLOB.demo_directory = "data/logs/[override_dir]"
 	GLOB.master_public_log_file = "[GLOB.public_log_directory]/round_log.txt" // BUBBER EDIT ADDITON
+	GLOB.demo_log = "[GLOB.demo_directory]/[GLOB.round_id]_demo.txt"
 	logger.init_logging()
 
 	if(Tracy.trace_path)

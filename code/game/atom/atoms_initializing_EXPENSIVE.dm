@@ -60,7 +60,7 @@
  * if the preloader is being used and then call [InitAtom][/datum/controller/subsystem/atoms/proc/InitAtom] of which the ultimate
  * result is that the Initialize proc is called.
  *
- */
+*/
 /atom/New(loc, ...)
 	//atom creation method that preloads variables at creation
 	if(GLOB.use_preloader && src.type == GLOB._preloader_path)//in case the instantiated atom is creating other atoms in New()
@@ -72,6 +72,12 @@
 		if(SSatoms.InitAtom(src, FALSE, args))
 			//we were deleted
 			return
+		#ifndef DISABLE_DEMOS
+		// monkestation start: replays
+		if(!(flags_1 & DEMO_IGNORE_1))
+			SSdemo.mark_new(src)
+		// monkestation end
+		#endif
 
 /**
  * The primary method that objects are setup in SS13 with
