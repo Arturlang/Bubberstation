@@ -1,11 +1,34 @@
+GLOBAL_VAR(demo_directory)
+GLOBAL_PROTECT(demo_directory)
+
+#define ADMIN_DEMO(user) "(<a href='?_src_=holder;[HrefToken(forceGlobal = TRUE)];adminopendemo=[REF(user)]'>REPLAY</a>)"
+
+// /datum/admins/Topic(href, href_list)
+// 	..()
+// 	if(href_list["adminopendemo"])
+// 		usr.client << link("wip/[GLOB.round_id]_demo.log")
+
+/world/SetupLogs()
+	. = ..()
+	var/override_dir = params[OVERRIDE_LOG_DIRECTORY_PARAMETER]
+	if(!override_dir)
+		GLOB.demo_directory = "data/replays"
+	else
+		GLOB.demo_directory = "data/logs/[override_dir]
+	GLOB.demo_log = "[GLOB.demo_directory]/[GLOB.round_id]_demo.log"
+
 /datum/config_entry/flag/demos_enabled
-	default = TRUE
+	default = FALSE
+
+/datum/admin_help/ClosureLinks(ref_src)
+	. = ..()
+	. += ADMIN_DEMO(ref_src)
 
 SUBSYSTEM_DEF(demo)
 	name = "Demo"
 	wait = 1
 	flags = SS_TICKER | SS_BACKGROUND
-	init_order = INIT_ORDER_DEMO
+	priority= 10
 	runlevels = RUNLEVELS_DEFAULT | RUNLEVEL_LOBBY
 
 	var/list/pre_init_lines = list() // stuff like chat before the init
