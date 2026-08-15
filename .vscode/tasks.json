@@ -143,6 +143,26 @@
 			"label": "Build All (map testing)"
 		},
 		{
+			// The OpenDream extension's own compile task takes no arguments, so this
+			// invokes the compiler directly to get the same TESTING define the BYOND
+			// "Build All (testing)" task uses.
+			// Point "command" elsewhere if your OpenDream build is not a sibling checkout.
+			"type": "process",
+			"command": "${workspaceFolder}/../OpenDream/bin/DMCompiler/DMCompiler.exe",
+			"args": [
+				"--suppress-unimplemented",
+				"--define",
+				"TESTING",
+				"${workspaceFolder}/${command:CurrentDME}"
+			],
+			"problemMatcher": ["$dreammaker"],
+			"group": {
+				"kind": "build"
+			},
+			"dependsOn": "tgui: build",
+			"label": "OpenDream: compile (testing)"
+		},
+		{
 			"type": "dreammaker",
 			"dme": "tgstation.dme",
 			"problemMatcher": ["$dreammaker"],
