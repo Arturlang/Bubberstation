@@ -96,11 +96,20 @@
 	opened_at = world.time
 	window.acquire_lock(src)
 	if(!window.is_ready())
+		var/list/initial_assets = list(
+			get_asset_datum(/datum/asset/simple/tgui),
+		)
+#ifdef OPENDREAM
+		// OpenDream validates browse_rsc() requests against files sent on the
+		// current connection. Send TGUI's dependent stylesheets before browse()
+		// creates the browser, or the browser can race ahead and request them
+		// before send_assets() has made them available.
+		initial_assets += get_asset_datum(/datum/asset/simple/namespaced/fontawesome)
+		initial_assets += get_asset_datum(/datum/asset/simple/namespaced/tgfont)
+#endif
 		window.initialize(
 			strict_mode = TRUE,
-			assets = list(
-				get_asset_datum(/datum/asset/simple/tgui),
-			))
+			assets = initial_assets)
 	else
 		window.send_message("ping")
 	send_assets()

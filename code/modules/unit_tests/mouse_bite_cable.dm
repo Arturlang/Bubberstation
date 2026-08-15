@@ -19,21 +19,22 @@
 
 	// Ai controlling processes expect a seconds_per_tick, supply a real-fake dt
 	var/fake_dt = SSai_controllers.wait * 0.1
+	var/datum/ai_controller/biter_controller = biter.ai_controller
 	// Set AI - AIs by default are off in z-levels with no client, we have to force it on.
-	biter.ai_controller.set_ai_status(AI_STATUS_ON)
-	biter.ai_controller.can_idle = FALSE
+	biter_controller.set_ai_status(AI_STATUS_ON)
+	biter_controller.can_idle = FALSE
 	// Select behavior - this will queue finding the cable
-	biter.ai_controller.SelectBehaviors(fake_dt)
+	biter_controller.SelectBehaviors(fake_dt)
 	// Process behavior - this will execute the "locate the cable" behavior
-	biter.ai_controller.process(fake_dt)
+	biter_controller.process(fake_dt)
 	// Check that the cable was found
-	TEST_ASSERT(biter.ai_controller.blackboard[BB_LOW_PRIORITY_HUNTING_TARGET] == wire, "Mouse, after executing find, did not set the cable as a target.")
+	TEST_ASSERT(biter_controller.blackboard[BB_LOW_PRIORITY_HUNTING_TARGET] == wire, "Mouse, after executing find, did not set the cable as a target.")
 	// Select behavior - this will queue hunting
-	biter.ai_controller.SelectBehaviors(fake_dt)
+	biter_controller.SelectBehaviors(fake_dt)
 	// Process behavior - this will execute the hunt for the cable and cause a bite (as we're in the min range)
-	biter.ai_controller.process(fake_dt)
+	biter_controller.process(fake_dt)
 	// Check that the cable was removed, as it was hunted correctly
-	TEST_ASSERT_NULL(biter.ai_controller.blackboard[BB_LOW_PRIORITY_HUNTING_TARGET], "Mouse, after executing hunt, did not clear their target blackboard.")
+	TEST_ASSERT_NULL(biter_controller.blackboard[BB_LOW_PRIORITY_HUNTING_TARGET], "Mouse, after executing hunt, did not clear their target blackboard.")
 
 	// Now check that the bite went through - remember we qdel mice on death
 	TEST_ASSERT(QDELETED(biter), "Mouse, did not die after biting a powered cable.")

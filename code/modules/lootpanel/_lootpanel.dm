@@ -47,7 +47,10 @@
 /datum/lootpanel/ui_close(mob/user)
 	. = ..()
 
-	UnregisterSignal(source_turf, list(COMSIG_ATOM_ENTERED, COMSIG_ATOM_AFTER_SUCCESSFUL_INITIALIZED_ON))
+	// OpenDream throws on UnregisterSignal(null, ...) where BYOND no-ops, and
+	// ui_close() can run after the turf is already gone.
+	if(source_turf)
+		UnregisterSignal(source_turf, list(COMSIG_ATOM_ENTERED, COMSIG_ATOM_AFTER_SUCCESSFUL_INITIALIZED_ON))
 	source_turf = null
 	reset_contents()
 

@@ -120,6 +120,14 @@
 		if (!keep_local_name)
 			new_asset_name = "asset.[ACI.hash][ACI.ext]"
 		if (client.sent_assets[new_asset_name] == asset_hash)
+#ifdef OPENDREAM
+			// OpenDream gates browse_rsc() by the current server connection, not
+			// just by the client's persisted cache. Always sending keeps valid
+			// asset.* URLs permitted after reconnects and avoids browser retry
+			// loops on TGUI subresources.
+			unreceived[asset_name] = ACI
+			continue
+#endif
 			if (GLOB.debugging_enabled)
 				log_asset("DEBUG: Skipping send of `[asset_name]` (as `[new_asset_name]`) for `[client]` because it already exists in the client's sent_assets list")
 			continue

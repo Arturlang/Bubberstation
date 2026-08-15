@@ -12,6 +12,15 @@
 
 /// Process asset cache client topic calls for `"asset_cache_preload_data=[HTML+JSON_STRING]"`
 /client/proc/asset_cache_preload_data(data)
+#ifdef OPENDREAM
+	// OpenDream's browse_rsc cache is not BYOND's cache, and the server tracks
+	// permitted browse_rsc files per connection. Trusting BYOND's persisted
+	// asset_data.json can make send_assets() skip the browse_rsc() call while
+	// TGUI still requests the hashed asset filename, causing repeated denied
+	// resource requests and very slow TGUI startup.
+	sent_assets = list()
+	return
+#endif
 	var/json = data
 	var/list/preloaded_assets = json_decode(json)
 
@@ -24,6 +33,9 @@
 
 /// Updates the client side stored json file used to keep track of what assets the client has between restarts/reconnects.
 /client/proc/asset_cache_update_json()
+#ifdef OPENDREAM
+	return
+#endif
 	if (world.time - connection_time < 10 SECONDS) //don't override the existing data file on a new connection
 		return
 

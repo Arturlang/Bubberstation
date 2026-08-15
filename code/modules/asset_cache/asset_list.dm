@@ -45,6 +45,12 @@ GLOBAL_LIST_EMPTY(asset_datums)
 
 /// Returns a cached tgui message of URL mappings
 /datum/asset/proc/get_serialized_url_mappings()
+#ifdef OPENDREAM
+	// OpenDream permits browse_rsc() files per connection, so a mapping cached
+	// against an earlier connection can hand out URLs the client is no longer
+	// allowed to fetch. Rebuild every time instead of caching.
+	return TGUI_CREATE_MESSAGE("asset/mappings", get_url_mappings())
+#endif
 	if (isnull(cached_serialized_url_mappings) || cached_serialized_url_mappings_transport_type != SSassets.transport.type)
 		cached_serialized_url_mappings = TGUI_CREATE_MESSAGE("asset/mappings", get_url_mappings())
 		cached_serialized_url_mappings_transport_type = SSassets.transport.type

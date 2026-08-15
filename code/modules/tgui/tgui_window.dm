@@ -81,6 +81,7 @@
 	html = replacetextEx(html, "\[tgui:strictMode]", strict_mode)
 	// Inject assets
 	var/inline_assets_str = ""
+	var/sent_inline_assets = FALSE
 	for(var/datum/asset/asset in assets)
 		var/mappings = asset.get_url_mappings()
 		for(var/name in mappings)
@@ -90,7 +91,13 @@
 				inline_assets_str += "Byond.loadCss('[url]', true);\n"
 			else if(copytext(name, -3) == ".js")
 				inline_assets_str += "Byond.loadJs('[url]', true);\n"
-		asset.send(client)
+		sent_inline_assets |= asset.send(client)
+#ifdef OPENDREAM
+	// Flush before browse() creates the window, or the browser can request these
+	// subresources before OpenDream has permitted them on this connection.
+	if(sent_inline_assets)
+		client.browse_queue_flush()
+#endif
 	if(length(inline_assets_str))
 		inline_assets_str = "<script>\n" + inline_assets_str + "</script>\n"
 	html = replacetextEx(html, "<!-- tgui:assets -->\n", inline_assets_str)
@@ -290,6 +297,12 @@
 		return
 	sent_assets |= list(asset)
 	. = asset.send(client)
+#ifdef OPENDREAM
+	// The stylesheet/mapping messages below reference these files by URL, so
+	// they must be permitted on the connection before the client acts on them.
+	if(.)
+		client.browse_queue_flush()
+#endif
 	if(istype(asset, /datum/asset/spritesheet))
 		var/datum/asset/spritesheet/spritesheet = asset
 		send_message("asset/stylesheet", spritesheet.css_filename())
