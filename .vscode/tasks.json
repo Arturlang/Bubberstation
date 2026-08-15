@@ -170,6 +170,24 @@
 			"label": "OpenDream: compile (testing)"
 		},
 		{
+			// Run this when an OpenDream build fails with MSB3021/MSB3027 ("being used by
+			// another process") or CS2012 ("locked by VBCSCompiler").
+			// A client or server that did not exit holds bin/Content.*, and MSBuild's
+			// reused worker nodes hold obj/. Neither goes away on its own.
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-Process -Name 'OpenDreamClient','OpenDreamServer' -ErrorAction SilentlyContinue | Stop-Process -Force; dotnet build-server shutdown"
+			],
+			"problemMatcher": [],
+			"group": {
+				"kind": "build"
+			},
+			"label": "OpenDream: free build locks"
+		},
+		{
 			"type": "dreammaker",
 			"dme": "tgstation.dme",
 			"problemMatcher": ["$dreammaker"],
