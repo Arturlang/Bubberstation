@@ -4508,6 +4508,7 @@
 #include "code\modules\deathmatch\deathmatch_modifier.dm"
 #include "code\modules\debugging\debugger.dm"
 #include "code\modules\debugging\tracy.dm"
+#include "code\modules\debugging\winget_parity.dm"
 #include "code\modules\detectivework\detective_scan_category.dm"
 #include "code\modules\detectivework\evidence.dm"
 #include "code\modules\detectivework\scanner.dm"
