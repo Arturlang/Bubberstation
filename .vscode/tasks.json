@@ -153,7 +153,7 @@
 				"--suppress-unimplemented",
 				"--define",
 				"TESTING",
-				"${workspaceFolder}/${command:CurrentDME}"
+				"${workspaceFolder}/tgstation.dme"
 			],
 			"problemMatcher": ["$dreammaker"],
 			"group": {
