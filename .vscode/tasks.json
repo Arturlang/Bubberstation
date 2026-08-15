@@ -146,6 +146,9 @@
 			// The OpenDream extension's own compile task takes no arguments, so this
 			// invokes the compiler directly to get the same TESTING define the BYOND
 			// "Build All (testing)" task uses.
+			// LOWMEMORYMODE + ABSOLUTE_MINIMUM force FORCE_MAP to runtimestation_minimal,
+			// matching "Build All (absolute minimum)" - the full station takes minutes to
+			// initialise, which is unbearable when iterating. Drop both defines to get it.
 			// Point "command" elsewhere if your OpenDream build is not a sibling checkout.
 			"type": "process",
 			"command": "${workspaceFolder}/../OpenDream/bin/DMCompiler/DMCompiler.exe",
@@ -153,6 +156,10 @@
 				"--suppress-unimplemented",
 				"--define",
 				"TESTING",
+				"--define",
+				"LOWMEMORYMODE",
+				"--define",
+				"ABSOLUTE_MINIMUM",
 				"${workspaceFolder}/tgstation.dme"
 			],
 			"problemMatcher": ["$dreammaker"],
