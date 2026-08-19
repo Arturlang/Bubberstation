@@ -198,9 +198,24 @@
 			"label": "OpenDream: fast build client"
 		},
 		{
-			// One-button fast iteration: C# engine build and DM compile in parallel.
-			// Used by the "Launch OpenDream (testing)" launch configuration.
-			"dependsOn": ["OpenDream: fast build both", "OpenDream: compile (testing)"],
+			// Only frees locks - no dotnet build-server shutdown, which would cold-start
+			// the compiler the extension's own builds rely on.
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-Process -Name 'OpenDreamClient','OpenDreamServer' -ErrorAction SilentlyContinue | Stop-Process -Force; exit 0"
+			],
+			"problemMatcher": [],
+			"label": "OpenDream: kill instances"
+		},
+		{
+			// Pre-launch for "Launch OpenDream (testing)": free locks and compile the DM
+			// side. The OpenDream extension builds the C# projects itself on launch
+			// (dotnet build for the client, dotnet run for the server), so building here
+			// too would do everything twice.
+			"dependsOn": ["OpenDream: kill instances", "OpenDream: compile (testing)"],
 			"problemMatcher": [],
 			"group": { "kind": "build" },
 			"label": "OpenDream: fast build + compile (testing)"
