@@ -188,6 +188,32 @@
 			"label": "OpenDream: free build locks"
 		},
 		{
+			// Kills lock-holding processes itself, skips restore and analyzers.
+			// Pass -Full in a terminal before committing engine/content C# changes.
+			"type": "shell",
+			"command": "powershell",
+			"args": ["-NoProfile", "-File", "E:\\GithubRepos\\OpenDream\\build.ps1", "-Target", "client"],
+			"problemMatcher": ["$msCompile"],
+			"group": { "kind": "build" },
+			"label": "OpenDream: fast build client"
+		},
+		{
+			"type": "shell",
+			"command": "powershell",
+			"args": ["-NoProfile", "-File", "E:\\GithubRepos\\OpenDream\\build.ps1", "-Target", "server"],
+			"problemMatcher": ["$msCompile"],
+			"group": { "kind": "build" },
+			"label": "OpenDream: fast build server"
+		},
+		{
+			"type": "shell",
+			"command": "powershell",
+			"args": ["-NoProfile", "-File", "E:\\GithubRepos\\OpenDream\\build.ps1"],
+			"problemMatcher": ["$msCompile"],
+			"group": { "kind": "build" },
+			"label": "OpenDream: fast build both"
+		},
+		{
 			"type": "dreammaker",
 			"dme": "tgstation.dme",
 			"problemMatcher": ["$dreammaker"],
