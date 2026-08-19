@@ -198,6 +198,14 @@
 			"label": "OpenDream: fast build client"
 		},
 		{
+			// One-button fast iteration: C# engine build and DM compile in parallel.
+			// Used by the "Launch OpenDream (testing)" launch configuration.
+			"dependsOn": ["OpenDream: fast build both", "OpenDream: compile (testing)"],
+			"problemMatcher": [],
+			"group": { "kind": "build" },
+			"label": "OpenDream: fast build + compile (testing)"
+		},
+		{
 			"type": "shell",
 			"command": "powershell",
 			"args": ["-NoProfile", "-File", "E:\\GithubRepos\\OpenDream\\build.ps1", "-Target", "server"],

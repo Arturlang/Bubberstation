@@ -120,7 +120,7 @@
 			"type": "opendream",
 			"request": "launch",
 			"name": "Launch OpenDream (testing) (requires extension, 64 bit rustg, and an SS14 account)",
-			"preLaunchTask": "OpenDream: compile (testing)",
+			"preLaunchTask": "OpenDream: fast build + compile (testing)",
 			"json_path": "${workspaceFolder}/tgstation.json"
 		}
 	]
