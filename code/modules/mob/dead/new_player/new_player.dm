@@ -73,20 +73,22 @@
 	return ready == PLAYER_READY_TO_PLAY
 
 //When you cop out of the round (NB: this HAS A SLEEP FOR PLAYER INPUT IN IT)
-/mob/dead/new_player/proc/make_me_an_observer()
+/// skip_confirmation bypasses the blocking alert(); only AUTO_OBSERVE passes it.
+/mob/dead/new_player/proc/make_me_an_observer(skip_confirmation = FALSE)
 	if(QDELETED(src) || !src.client)
 		ready = PLAYER_NOT_READY
 		return FALSE
 
-	var/less_input_message
-	if(SSlag_switch.measures[DISABLE_DEAD_KEYLOOP])
-		less_input_message = " - Notice: Observer freelook is currently disabled."
-	// Don't convert this to tgui please, it's way too important
-	var/this_is_like_playing_right = alert(usr, "Are you sure you wish to observe?[less_input_message]", "Observe", "Yes", "No") //SKYRAT EDIT CHANGE
-	if(QDELETED(src) || !src.client || this_is_like_playing_right != "Yes")
-		ready = PLAYER_NOT_READY
-		show_title_screen() // SKYRAT EDIT ADDITION
-		return FALSE
+	if(!skip_confirmation)
+		var/less_input_message
+		if(SSlag_switch.measures[DISABLE_DEAD_KEYLOOP])
+			less_input_message = " - Notice: Observer freelook is currently disabled."
+		// Don't convert this to tgui please, it's way too important
+		var/this_is_like_playing_right = alert(usr, "Are you sure you wish to observe?[less_input_message]", "Observe", "Yes", "No") //SKYRAT EDIT CHANGE
+		if(QDELETED(src) || !src.client || this_is_like_playing_right != "Yes")
+			ready = PLAYER_NOT_READY
+			show_title_screen() // SKYRAT EDIT ADDITION
+			return FALSE
 
 	hide_title_screen() // SKYRAT EDIT ADDITION - Skyrat Titlescreen
 	var/mob/dead/observer/observer = new()

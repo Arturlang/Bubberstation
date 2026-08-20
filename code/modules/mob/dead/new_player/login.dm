@@ -65,6 +65,57 @@
 	if(GLOB.unrecommended_builds[num2text(client.byond_build)])
 		INVOKE_ASYNC(src, PROC_REF(unrcommended_build_alert))
 
+#ifdef AUTO_OBSERVE
+	// Rendering-parity builds only: drop straight into the world as an observer
+	// so BYOND and OpenDream can be captured side by side without a human
+	// clicking through the lobby. Never defined in a normal build.
+	INVOKE_ASYNC(src, PROC_REF(auto_observe))
+#endif
+
+#ifdef AUTO_OBSERVE
+/mob/dead/new_player/proc/auto_observe()
+	// Wait for the round to actually be running, otherwise there is no observer
+	// landmark to teleport to yet.
+	for(var/i in 1 to 600)
+		if(SSticker?.current_state >= GAME_STATE_PLAYING)
+			break
+		sleep(1 SECONDS)
+	if(QDELETED(src) || !client)
+		return
+	make_me_an_observer(skip_confirmation = TRUE)
+	sleep(10 SECONDS)
+	dump_lighting_values()
+
+/// Logs the lighting values the SERVER computed, so BYOND and OpenDream can be
+/// compared as data rather than as pixels: the renderer only ever draws what
+/// these colour matrices say. Sampled around the observer landmark so both
+/// engines report the same turfs.
+/proc/dump_lighting_values()
+	var/obj/effect/landmark/observer_start/start = locate(/obj/effect/landmark/observer_start) in GLOB.landmarks_list
+	var/turf/origin = start ? get_turf(start) : locate(1, 1, 1)
+	if(!origin)
+		return
+	// Separate files per engine: DreamDaemon's world.log goes to its own window
+	// rather than stdout, and both servers run at once.
+#ifdef OPENDREAM
+	var/dumpfile = file("lightdump-od.txt")
+#else
+	var/dumpfile = file("lightdump-by.txt")
+#endif
+	fdel(dumpfile)
+	dumpfile << "LIGHTDUMP origin=([origin.x],[origin.y],[origin.z])"
+	for(var/dx in -4 to 4)
+		for(var/dy in -4 to 4)
+			var/turf/probe = locate(origin.x + dx, origin.y + dy, origin.z)
+			if(!probe)
+				continue
+			var/atom/movable/lighting_object/lo = probe.lighting_object
+			if(!lo)
+				dumpfile << "LIGHTDUMP ([dx],[dy]) NO_LIGHTING_OBJECT"
+				continue
+			dumpfile << "LIGHTDUMP ([dx],[dy]) state=[lo.icon_state || "null"] color=[json_encode(lo.color)]"
+#endif
+
 /mob/dead/new_player/proc/unrcommended_build_alert()
 	var/warning = "Hey! The build of byond you are running ([client.byond_build]) has one or more potential issues that may cause major gameplay disruptions.\n\n\
 		You may continue to play, but be aware you may encounter the following issue while playing:\n\"[GLOB.unrecommended_builds[num2text(client.byond_build)]]\"\n\n\
