@@ -82,9 +82,28 @@
 		sleep(1 SECONDS)
 	if(QDELETED(src) || !client)
 		return
+	var/client/observer_client = client
 	make_me_an_observer(skip_confirmation = TRUE)
 	sleep(10 SECONDS)
 	dump_lighting_values()
+#ifdef AUTO_WALK
+	INVOKE_ASYNC(GLOBAL_PROC, GLOBAL_PROC_REF(auto_walk_north_south), observer_client)
+#endif
+
+#ifdef AUTO_WALK
+/// Walks the observer north and south forever so movement artifacts can be
+/// reproduced and captured without a human at the keyboard. Separate from
+/// AUTO_OBSERVE because a self-walking observer is surprising if you only
+/// wanted to skip the lobby.
+/proc/auto_walk_north_south(client/walker)
+	while(walker?.mob)
+		for(var/i in 1 to 5)
+			step(walker.mob, NORTH)
+			sleep(2)
+		for(var/i in 1 to 5)
+			step(walker.mob, SOUTH)
+			sleep(2)
+#endif
 
 /// Logs the lighting values the SERVER computed, so BYOND and OpenDream can be
 /// compared as data rather than as pixels: the renderer only ever draws what
